@@ -60,11 +60,11 @@ module CodingDojo2
             new_list_of_solutions << [current_total + PRICES[uniqs.count], 
                                       array_substract(remaining_books, uniqs)]
 
-            uniqs_count_dec_one = uniqs.count - 1
-            if (uniqs_count_dec_one > 0)
-                combinations = uniqs.combination(uniqs_count_dec_one).to_a
+            combinations_count = uniqs.count - 1
+            if (combinations_count > 0)
+                combinations = uniqs.combination(combinations_count).to_a
 
-                price_for_combinations_count = PRICES[uniqs_count_dec_one]
+                price_for_combinations_count = PRICES[combinations_count]
                 combinations.each do |combination|
                     new_list_of_solutions << [current_total + price_for_combinations_count, 
                                               array_substract(remaining_books, combination)]
