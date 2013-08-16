@@ -42,7 +42,6 @@ module CodingDojo2
     def recur(list_of_solutions)
 
         done = list_of_solutions.map{|tuple| tuple[1].empty?}.inject {|a, b| a && b}
-
         return list_of_solutions.map{|tuple| tuple[0]}.min if done
 
         new_list_of_solutions = []
@@ -56,7 +55,6 @@ module CodingDojo2
             end
 
             uniqs = remaining_books.uniq
-
             new_list_of_solutions << [current_total + PRICES[uniqs.count], 
                                       array_substract(remaining_books, uniqs)]
 
@@ -64,9 +62,8 @@ module CodingDojo2
             if (combinations_count > 0)
                 combinations = uniqs.combination(combinations_count).to_a
 
-                price_for_combinations_count = PRICES[combinations_count]
                 combinations.each do |combination|
-                    new_list_of_solutions << [current_total + price_for_combinations_count, 
+                    new_list_of_solutions << [current_total + PRICES[combinations_count], 
                                               array_substract(remaining_books, combination)]
                 end
             end
