@@ -1,4 +1,12 @@
-# Coding Dojo 2 : Potter Kata
+# my take on Coding Dojo 2 : Potter Kata
+
+this is my take on the kattapotter dojo.
+
+This was done partly during a session of coding dojos organised by Dominique Broeglin
+for the geneva rb group
+
+
+## kata information
 
 This project is a Ruby template for the Potter Kata.
 For details on the Kata itself see 
