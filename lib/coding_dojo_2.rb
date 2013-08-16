@@ -39,43 +39,40 @@ module CodingDojo2
 
     # unoptimized and unidiomatic
 
-    def recur(list_of_structs)
+    def recur(list_of_solutions)
 
-        done = list_of_structs.map{|tuple| tuple[1].empty?}.inject {|a, b| a && b}
+        done = list_of_solutions.map{|tuple| tuple[1].empty?}.inject {|a, b| a && b}
 
-        if done
-            return list_of_structs.map{|tuple| tuple[0]}.min
-        end
+        return list_of_solutions.map{|tuple| tuple[0]}.min if done
 
-        new_list_of_structs = []
+        new_list_of_solutions = []
 
-        list_of_structs.each do |tuple|
-            current_total = tuple[0]
-            remaining_books = tuple[1]
+        list_of_solutions.each do |tuple|
+            current_total, remaining_books = tuple
 
             if remaining_books.empty?
-                new_list_of_structs << [current_total, []]
+                new_list_of_solutions << tuple
                 next
             end
 
             uniqs = remaining_books.uniq
 
-            new_list_of_structs << [current_total + PRICES[uniqs.count], 
-                                    array_substract(remaining_books, uniqs)]
+            new_list_of_solutions << [current_total + PRICES[uniqs.count], 
+                                      array_substract(remaining_books, uniqs)]
 
+            uniqs_count_dec_one = uniqs.count - 1
+            if (uniqs_count_dec_one > 0)
+                combinations = uniqs.combination(uniqs_count_dec_one).to_a
 
-            if (uniqs.count - 1 > 0)
-                combinations = uniqs.combination(uniqs.count - 1).to_a
-
-                price_for_combinations_count = PRICES[uniqs.count - 1]
+                price_for_combinations_count = PRICES[uniqs_count_dec_one]
                 combinations.each do |combination|
-                    new_list_of_structs << [current_total + price_for_combinations_count, 
-                                            array_substract(remaining_books, combination)]
+                    new_list_of_solutions << [current_total + price_for_combinations_count, 
+                                              array_substract(remaining_books, combination)]
                 end
             end
         end
 
-        recur(new_list_of_structs)
+        recur(new_list_of_solutions)
     end
 
     def calculate(books)
