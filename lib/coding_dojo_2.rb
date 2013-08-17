@@ -6,11 +6,11 @@ module CodingDojo2
     BOOK_UNIT_PRICE = 8
 
     PRICES = {
-        1 => 1 * BOOK_UNIT_PRICE ,
-        2 => 2 * BOOK_UNIT_PRICE * 0.95,
-        3 => 3 * BOOK_UNIT_PRICE * 0.90,
-        4 => 4 * BOOK_UNIT_PRICE * 0.8,
-        5 => 5 * BOOK_UNIT_PRICE * 0.75
+      1 => 1 * BOOK_UNIT_PRICE ,
+      2 => 2 * BOOK_UNIT_PRICE * 0.95,
+      3 => 3 * BOOK_UNIT_PRICE * 0.90,
+      4 => 4 * BOOK_UNIT_PRICE * 0.8,
+      5 => 5 * BOOK_UNIT_PRICE * 0.75
     }
 
     def array_substract(a1, a2)
@@ -18,13 +18,27 @@ module CodingDojo2
         result = a1.clone
 
         a2.each do |val|
-            index = result.index(val)
-            result.delete_at(index) unless index.nil?
+          index = result.index(val)
+          result.delete_at(index) unless index.nil?
         end
-
         result
     end
 
+
+    def best_price(solutions)
+      solutions.map{|solution| solution[0]}.min
+    end
+
+    def done?(solutions)
+      solutions.map{|solution| solution[1].empty?}.all?
+    end
+
+    def solution_next_step(old_solution, book_group_to_remove)
+      current_total, remaining_books = old_solution
+
+      [current_total + PRICES[book_group_to_remove.count], 
+       array_substract(remaining_books, book_group_to_remove)]
+    end
     # recur on a list of possible solutions,
     # where each solution is a tuple [t1 t2] 
     # t1 is the total price of a given set of uniq books 
@@ -39,41 +53,26 @@ module CodingDojo2
 
     # unoptimized and unidiomatic
 
-    def recur(list_of_solutions)
+    def recur(solutions)
 
-        done = list_of_solutions.map{|tuple| tuple[1].empty?}.inject {|a, b| a && b}
-        return list_of_solutions.map{|tuple| tuple[0]}.min if done
+      return best_price(solutions) if done?(solutions)
 
-        new_list_of_solutions = []
-
-        list_of_solutions.each do |tuple|
-            current_total, remaining_books = tuple
-
-            if remaining_books.empty?
-                new_list_of_solutions << tuple
-                next
-            end
-
-            uniqs = remaining_books.uniq
-            new_list_of_solutions << [current_total + PRICES[uniqs.count], 
-                                      array_substract(remaining_books, uniqs)]
-
-            combinations_count = uniqs.count - 1
-            if (combinations_count > 0)
-                combinations = uniqs.combination(combinations_count).to_a
-
-                combinations.each do |combination|
-                    new_list_of_solutions << [current_total + PRICES[combinations_count], 
-                                              array_substract(remaining_books, combination)]
-                end
-            end
+      new_solutions = solutions.inject([]) do |new_list, solution|
+        remaining_books = solution[1]
+        if remaining_books.empty?
+          new_list << solution
+        else
+          uniqs = remaining_books.uniq
+          groups = [uniqs] + uniqs.combination(uniqs.count - 1).select{|a| ! a.empty? }
+          groups.each {|group| new_list << solution_next_step(solution, group)}
+          new_list
         end
-
-        recur(new_list_of_solutions)
+      end
+      recur(new_solutions)
     end
 
     def calculate(books)
-        recur([[0, books]])
+      recur([[0, books]])
     end
 
   end
